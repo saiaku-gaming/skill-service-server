@@ -39,9 +39,10 @@ public class WardrobeController {
 
 	@Autowired
 	private WardrobeItemService wardrobeItemService;
-	
-	private static final CharacterServiceClient characterServiceClient = CharacterServiceClient.get();
-	
+
+	@Autowired
+	private CharacterServiceClient characterServiceClient;
+
 	@RequestMapping(path = "/get-wardrobe-items", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> getWardrobeItems(@Valid @RequestBody GetWardrobeItemsParameter input) {
@@ -49,14 +50,17 @@ public class WardrobeController {
 		List<String> items = wardrobeItems.stream().map(WardrobeItem::getName).collect(Collectors.toList());
 		return JS.message(HttpStatus.OK, items);
 	}
-	
+
 	@RequestMapping(path = "/debug-add-wardrobe-item", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<JsonNode> addWardrobeItem(@Valid @RequestBody DebugAddWardrobeItemParameter input) throws IOException {
-		RestResponse<CharacterData> characterResp = characterServiceClient.getCharacterWithoutOwnerValidation(input.getUsername().toLowerCase());
+	public ResponseEntity<JsonNode> addWardrobeItem(@Valid @RequestBody DebugAddWardrobeItemParameter input)
+			throws IOException {
+		RestResponse<CharacterData> characterResp = characterServiceClient
+				.getCharacterWithoutOwnerValidation(input.getUsername().toLowerCase());
 		Optional<CharacterData> characterOpt = characterResp.get();
-		if(characterOpt.isPresent()) {
-			AddWardrobeItemParameter newItemParam = new AddWardrobeItemParameter(characterOpt.get().getCharacterName(), input.getItemName());
+		if (characterOpt.isPresent()) {
+			AddWardrobeItemParameter newItemParam = new AddWardrobeItemParameter(characterOpt.get().getCharacterName(),
+					input.getItemName());
 			return addWardrobeItem(newItemParam);
 		} else {
 			return JS.message(characterResp);
@@ -66,14 +70,14 @@ public class WardrobeController {
 	@RequestMapping(path = "/add-wardrobe-item", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> addWardrobeItem(@Valid @RequestBody AddWardrobeItemParameter input) {
-		
-		//Duplicate protection
+
+		// Duplicate protection
 		List<WardrobeItem> wardrobeItems = wardrobeItemService.getWardrobeItems(input.getCharacterName());
 		List<String> items = wardrobeItems.stream().map(WardrobeItem::getName).collect(Collectors.toList());
-		if(items.contains(input.getItemName())) {
+		if (items.contains(input.getItemName())) {
 			return JS.message(HttpStatus.ALREADY_REPORTED, "Already in store");
 		}
-		
+
 		wardrobeItemService.saveWardrobeItem(new WardrobeItem(input.getItemName(), input.getCharacterName()));
 		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.WARDROBE.name(),
 				RabbitMQRouting.Wardrobe.ADD_WARDROBE_ITEM.name(),
