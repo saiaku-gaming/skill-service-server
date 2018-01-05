@@ -78,7 +78,7 @@ public class WardrobeController {
 			return JS.message(HttpStatus.ALREADY_REPORTED, "Already in store");
 		}
 
-		wardrobeItemService.saveWardrobeItem(new WardrobeItem(input.getItemName(), input.getCharacterName()));
+		wardrobeItemService.saveWardrobeItem(new WardrobeItem(input.getItemName().toUpperCase(), input.getCharacterName()));
 		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.WARDROBE.name(),
 				RabbitMQRouting.Wardrobe.ADD_WARDROBE_ITEM.name(),
 				new NotificationMessage(input.getCharacterName(), "wardrobe item added"));
