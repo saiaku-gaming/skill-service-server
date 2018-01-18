@@ -19,4 +19,6 @@ public class DevConfig {
 	public PersonServiceClient personServiceClient() {
 		return PersonServiceClient.get();
 	}
+	
+	
 }
