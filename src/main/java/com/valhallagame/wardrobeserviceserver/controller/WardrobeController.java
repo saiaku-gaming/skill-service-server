@@ -48,13 +48,13 @@ public class WardrobeController {
 	public ResponseEntity<JsonNode> addWardrobeItem(@Valid @RequestBody AddWardrobeItemParameter input) {
 
 		// Duplicate protection
-		List<WardrobeItem> wardrobeItems = wardrobeItemService.getWardrobeItems(input.getCharacterName());
+		List<WardrobeItem> wardrobeItems = wardrobeItemService.getWardrobeItems(input.getCharacterName().toLowerCase());
 		List<String> items = wardrobeItems.stream().map(WardrobeItem::getName).collect(Collectors.toList());
-		if (items.contains(input.getName())) {
+		if (items.contains(input.getName().name())) {
 			return JS.message(HttpStatus.ALREADY_REPORTED, "Already in store");
 		}
 
-		wardrobeItemService.saveWardrobeItem(new WardrobeItem(input.getName().toUpperCase(), input.getCharacterName()));
+		wardrobeItemService.saveWardrobeItem(new WardrobeItem(input.getName().name(), input.getCharacterName().toLowerCase()));
 		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.WARDROBE.name(),
 				RabbitMQRouting.Wardrobe.ADD_WARDROBE_ITEM.name(),
 				new NotificationMessage(input.getCharacterName(), "wardrobe item added"));
