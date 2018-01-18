@@ -46,7 +46,7 @@ public class WardrobeController {
 	@RequestMapping(path = "/get-wardrobe-items", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> getWardrobeItems(@Valid @RequestBody GetWardrobeItemsParameter input) throws IOException {
-		RestResponse<CharacterData> characterResp = characterServiceClient.getCharacterWithoutOwnerValidation(input.getUsername());
+		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
 		Optional<CharacterData> characterOpt = characterResp.get();
 		if(!characterOpt.isPresent()) {
 			return JS.message(characterResp);
