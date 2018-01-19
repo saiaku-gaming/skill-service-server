@@ -20,6 +20,32 @@ public class RabbitMQConfig {
 	}
 
 	@Bean
+	public DirectExchange featExchange() {
+		return new DirectExchange(RabbitMQRouting.Exchange.FEAT.name());
+	}
+
+	@Bean
+	public Queue wardrobeFeatAddQueue() {
+		return new Queue("wardrobeFeatAddQueue");
+	}
+
+	@Bean
+	public Binding bindingFeatAdd(DirectExchange featExchange, Queue wardrobeFeatAddQueue) {
+		return BindingBuilder.bind(wardrobeFeatAddQueue).to(featExchange).with(RabbitMQRouting.Feat.ADD);
+	}
+
+	@Bean
+	public Queue wardrobeCharacterDeleteQueue() {
+		return new Queue("wardrobeCharacterDeleteQueue");
+	}
+
+	@Bean
+	public Binding bindingCharacterDeleted(DirectExchange wardrobeExchange, Queue wardrobeCharacterDeleteQueue) {
+		return BindingBuilder.bind(wardrobeCharacterDeleteQueue).to(wardrobeExchange)
+				.with(RabbitMQRouting.Character.DELETE);
+	}
+
+	@Bean
 	public Jackson2JsonMessageConverter jacksonConverter() {
 		return new Jackson2JsonMessageConverter();
 	}
@@ -30,16 +56,4 @@ public class RabbitMQConfig {
 		factory.setMessageConverter(jacksonConverter());
 		return factory;
 	}
-	
-	@Bean
-	public Queue wardrobeCharacterDelete() {
-		return new Queue("wardrobeCharacterDeleteQueue");
-	}
-	
-	@Bean
-	public Binding bindingCharacterDeleted(DirectExchange characterExchange, Queue wardrobeCharacterDeleteQueue) {
-		return BindingBuilder.bind(wardrobeCharacterDeleteQueue).to(characterExchange)
-				.with(RabbitMQRouting.Character.DELETE);
-	}
-
 }
