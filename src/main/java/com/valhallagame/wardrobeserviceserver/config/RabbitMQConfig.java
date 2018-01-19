@@ -15,8 +15,8 @@ import com.valhallagame.common.rabbitmq.RabbitMQRouting;
 public class RabbitMQConfig {
 	// Wardrobe configs
 	@Bean
-	public DirectExchange wardrobeExchange() {
-		return new DirectExchange(RabbitMQRouting.Exchange.WARDROBE.name());
+	public DirectExchange characterExchange() {
+		return new DirectExchange(RabbitMQRouting.Exchange.CHARACTER.name());
 	}
 
 	@Bean
@@ -40,8 +40,8 @@ public class RabbitMQConfig {
 	}
 
 	@Bean
-	public Binding bindingCharacterDeleted(DirectExchange wardrobeExchange, Queue wardrobeCharacterDeleteQueue) {
-		return BindingBuilder.bind(wardrobeCharacterDeleteQueue).to(wardrobeExchange)
+	public Binding bindingCharacterDeleted(DirectExchange characterExchange, Queue wardrobeCharacterDeleteQueue) {
+		return BindingBuilder.bind(wardrobeCharacterDeleteQueue).to(characterExchange)
 				.with(RabbitMQRouting.Character.DELETE);
 	}
 
