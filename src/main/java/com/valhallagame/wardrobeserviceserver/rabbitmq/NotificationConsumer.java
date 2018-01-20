@@ -31,7 +31,7 @@ public class NotificationConsumer {
 
 	@RabbitListener(queues = { "#{wardrobeFeatAddQueue.name}" })
 	public void receiveFeatAdd(NotificationMessage message) {
-		logger.info("Received fead add notification with message: ", message);
+		logger.info("Received fead add notification with message: {}", message.toString());
 		String featName = (String) message.getData().get("feat");
 		String characterName = (String) message.getData().get("characterName");
 
