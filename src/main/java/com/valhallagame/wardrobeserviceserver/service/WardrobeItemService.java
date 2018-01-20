@@ -50,10 +50,30 @@ public class WardrobeItemService {
 		switch (FeatName.valueOf(featName)) {
 		case EINHARJER_SLAYER:
 			logger.info("Found Einharjer_Slayer in the switch");
-			WardrobeItem wardrobeItem = new WardrobeItem();
-			wardrobeItem.setCharacterOwner(characterName);
-			wardrobeItem.setName(com.valhallagame.wardrobeserviceclient.message.WardrobeItem.MAIL_ARMOR.name());
-			saveWardrobeItem(wardrobeItem);
+			WardrobeItem mailArmor = new WardrobeItem();
+			mailArmor.setCharacterOwner(characterName);
+			mailArmor.setName(com.valhallagame.wardrobeserviceclient.message.WardrobeItem.MAIL_ARMOR.name());
+			saveWardrobeItem(mailArmor);
+
+			try {
+				RestResponse<CharacterData> characterWithoutOwnerValidation = characterServiceClient
+						.getCharacterWithoutOwnerValidation(characterName);
+				if (characterWithoutOwnerValidation.get().isPresent()) {
+					rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.WARDROBE.name(),
+							RabbitMQRouting.Wardrobe.ADD_WARDROBE_ITEM.name(),
+							new NotificationMessage(characterWithoutOwnerValidation.get().get().getOwnerUsername(),
+									"wardrobe item added"));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return;
+		case TRAINING_EFFICIENCY:
+			logger.info("Found TRAINING_EFFICIENCY in the switch");
+			WardrobeItem warhammer = new WardrobeItem();
+			warhammer.setCharacterOwner(characterName);
+			warhammer.setName(com.valhallagame.wardrobeserviceclient.message.WardrobeItem.WARHAMMER.name());
+			saveWardrobeItem(warhammer);
 
 			try {
 				RestResponse<CharacterData> characterWithoutOwnerValidation = characterServiceClient
