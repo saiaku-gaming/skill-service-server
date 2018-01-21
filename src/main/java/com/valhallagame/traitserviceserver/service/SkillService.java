@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver.service;
+package com.valhallagame.traitserviceserver.service;
 
 import java.util.List;
 
@@ -8,28 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.valhallagame.featserviceclient.message.FeatName;
-import com.valhallagame.skillserviceserver.model.Skill;
-import com.valhallagame.skillserviceserver.rabbitmq.NotificationConsumer;
-import com.valhallagame.skillserviceserver.repository.SkillRepository;
+import com.valhallagame.traitserviceserver.model.Trait;
+import com.valhallagame.traitserviceserver.rabbitmq.NotificationConsumer;
+import com.valhallagame.traitserviceserver.repository.TraitRepository;
 
 @Service
-public class SkillService {
+public class TraitService {
 
 	private static final Logger logger = LoggerFactory.getLogger(NotificationConsumer.class);
 
 	@Autowired
-	private SkillRepository skillRepository;
+	private TraitRepository traitRepository;
 
-	public Skill saveSkill(Skill skill) {
-		return skillRepository.save(skill);
+	public Trait saveTrait(Trait trait) {
+		return traitRepository.save(trait);
 	}
 
-	public void deleteSkill(Skill skill) {
-		skillRepository.delete(skill);
+	public void deleteTrait(Trait trait) {
+		traitRepository.delete(trait);
 	}
 
-	public List<Skill> getSkills(String characterName) {
-		return skillRepository.findByCharacterOwner(characterName);
+	public List<Trait> getTraits(String characterName) {
+		return traitRepository.findByCharacterOwner(characterName);
 	}
 
 	public void handleFeatAdding(String characterName, String featName) {

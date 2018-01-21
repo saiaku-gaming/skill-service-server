@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver.config;
+package com.valhallagame.traitserviceserver.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -13,7 +13,7 @@ import com.valhallagame.common.rabbitmq.RabbitMQRouting;
 
 @Configuration
 public class RabbitMQConfig {
-	// Skill configs
+	// Trait configs
 	@Bean
 	public DirectExchange characterExchange() {
 		return new DirectExchange(RabbitMQRouting.Exchange.CHARACTER.name());
@@ -25,23 +25,23 @@ public class RabbitMQConfig {
 	}
 
 	@Bean
-	public Queue skillFeatAddQueue() {
-		return new Queue("skillFeatAddQueue");
+	public Queue traitFeatAddQueue() {
+		return new Queue("traitFeatAddQueue");
 	}
 
 	@Bean
-	public Binding bindingFeatAdd(DirectExchange featExchange, Queue skillFeatAddQueue) {
-		return BindingBuilder.bind(skillFeatAddQueue).to(featExchange).with(RabbitMQRouting.Feat.ADD);
+	public Binding bindingFeatAdd(DirectExchange featExchange, Queue traitFeatAddQueue) {
+		return BindingBuilder.bind(traitFeatAddQueue).to(featExchange).with(RabbitMQRouting.Feat.ADD);
 	}
 
 	@Bean
-	public Queue skillCharacterDeleteQueue() {
-		return new Queue("skillCharacterDeleteQueue");
+	public Queue traitCharacterDeleteQueue() {
+		return new Queue("traitCharacterDeleteQueue");
 	}
 
 	@Bean
-	public Binding bindingCharacterDeleted(DirectExchange characterExchange, Queue skillCharacterDeleteQueue) {
-		return BindingBuilder.bind(skillCharacterDeleteQueue).to(characterExchange)
+	public Binding bindingCharacterDeleted(DirectExchange characterExchange, Queue traitCharacterDeleteQueue) {
+		return BindingBuilder.bind(traitCharacterDeleteQueue).to(characterExchange)
 				.with(RabbitMQRouting.Character.DELETE);
 	}
 

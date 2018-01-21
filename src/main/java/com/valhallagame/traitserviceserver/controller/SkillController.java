@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver.controller;
+package com.valhallagame.traitserviceserver.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,56 +24,56 @@ import com.valhallagame.common.JS;
 import com.valhallagame.common.RestResponse;
 import com.valhallagame.common.rabbitmq.NotificationMessage;
 import com.valhallagame.common.rabbitmq.RabbitMQRouting;
-import com.valhallagame.skillserviceclient.message.AddSkillParameter;
-import com.valhallagame.skillserviceclient.message.GetSkillsParameter;
-import com.valhallagame.skillserviceserver.model.Skill;
-import com.valhallagame.skillserviceserver.service.SkillService;
+import com.valhallagame.traitserviceclient.message.AddTraitParameter;
+import com.valhallagame.traitserviceclient.message.GetTraitsParameter;
+import com.valhallagame.traitserviceserver.model.Trait;
+import com.valhallagame.traitserviceserver.service.TraitService;
 
 @Controller
-@RequestMapping(path = "/v1/skill")
-public class SkillController {
+@RequestMapping(path = "/v1/trait")
+public class TraitController {
 
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
 	@Autowired
-	private SkillService skillService;
+	private TraitService traitService;
 	
 	@Autowired
 	private CharacterServiceClient characterServiceClient;
 	
 
-	@RequestMapping(path = "/get-skill-items", method = RequestMethod.POST)
+	@RequestMapping(path = "/get-trait-items", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<JsonNode> getSkills(@Valid @RequestBody GetSkillsParameter input) throws IOException {
+	public ResponseEntity<JsonNode> getTraits(@Valid @RequestBody GetTraitsParameter input) throws IOException {
 		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
 		Optional<CharacterData> characterOpt = characterResp.get();
 		if(!characterOpt.isPresent()) {
 			return JS.message(characterResp);
 		}
 		CharacterData character = characterOpt.get();
-		List<Skill> skills = skillService.getSkills(character.getCharacterName());
-		List<String> items = skills.stream().map(Skill::getName).collect(Collectors.toList());
+		List<Trait> traits = traitService.getTraits(character.getCharacterName());
+		List<String> items = traits.stream().map(Trait::getName).collect(Collectors.toList());
 		return JS.message(HttpStatus.OK, items);
 	}
 
 
-	@RequestMapping(path = "/add-skill-item", method = RequestMethod.POST)
+	@RequestMapping(path = "/add-trait-item", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<JsonNode> addSkill(@Valid @RequestBody AddSkillParameter input) {
+	public ResponseEntity<JsonNode> addTrait(@Valid @RequestBody AddTraitParameter input) {
 
 		// Duplicate protection
-		List<Skill> skills = skillService.getSkills(input.getCharacterName().toLowerCase());
-		List<String> items = skills.stream().map(Skill::getName).collect(Collectors.toList());
+		List<Trait> traits = traitService.getTraits(input.getCharacterName().toLowerCase());
+		List<String> items = traits.stream().map(Trait::getName).collect(Collectors.toList());
 		if (items.contains(input.getName().name())) {
 			return JS.message(HttpStatus.ALREADY_REPORTED, "Already in store");
 		}
 
-		skillService.saveSkill(new Skill(input.getName().name(), input.getCharacterName().toLowerCase()));
-		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.SKILL.name(),
-				RabbitMQRouting.Skill.ADD.name(),
-				new NotificationMessage(input.getCharacterName(), "skill item added"));
+		traitService.saveTrait(new Trait(input.getName().name(), input.getCharacterName().toLowerCase()));
+		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(),
+				RabbitMQRouting.Trait.ADD.name(),
+				new NotificationMessage(input.getCharacterName(), "trait item added"));
 
-		return JS.message(HttpStatus.OK, "Skill item added");
+		return JS.message(HttpStatus.OK, "Trait item added");
 	}
 }

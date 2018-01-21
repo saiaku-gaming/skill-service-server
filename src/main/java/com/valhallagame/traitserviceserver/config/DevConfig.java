@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver.config;
+package com.valhallagame.traitserviceserver.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

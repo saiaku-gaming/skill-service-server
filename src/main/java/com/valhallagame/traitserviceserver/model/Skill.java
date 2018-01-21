@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver.model;
+package com.valhallagame.traitserviceserver.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "skill")
-public class Skill {
+@Table(name = "trait")
+public class Trait {
 	@Id
-	@SequenceGenerator(name = "skill_skill_id_seq", sequenceName = "skill_skill_id_seq", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skill_skill_id_seq")
-	@Column(name = "skill_item_id", updatable = false)
+	@SequenceGenerator(name = "trait_trait_id_seq", sequenceName = "trait_trait_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trait_trait_id_seq")
+	@Column(name = "trait_item_id", updatable = false)
 	private Integer id;
 
 	@Column(name = "name")
@@ -30,7 +30,7 @@ public class Skill {
 	@Column(name = "character_owner")
 	private String characterOwner;
 
-	public Skill(String name, String characterOwner) {
+	public Trait(String name, String characterOwner) {
 		this.name = name;
 		this.characterOwner = characterOwner;
 	}

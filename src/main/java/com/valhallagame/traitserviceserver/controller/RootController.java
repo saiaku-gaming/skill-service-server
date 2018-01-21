@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver.controller;
+package com.valhallagame.traitserviceserver.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

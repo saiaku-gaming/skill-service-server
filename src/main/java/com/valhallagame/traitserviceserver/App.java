@@ -1,4 +1,4 @@
-package com.valhallagame.skillserviceserver;
+package com.valhallagame.traitserviceserver;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class App {
 	@Bean
 	public EmbeddedServletContainerCustomizer containerCustomizer() {
 		return (container -> {
-			container.setPort(DefaultServicePortMappings.SKILL_SERVICE_PORT);
+			container.setPort(DefaultServicePortMappings.TRAIT_SERVICE_PORT);
 		});
 	}
 }
