@@ -9,13 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.valhallagame.featserviceclient.message.FeatName;
 import com.valhallagame.traitserviceserver.model.Trait;
-import com.valhallagame.traitserviceserver.rabbitmq.NotificationConsumer;
 import com.valhallagame.traitserviceserver.repository.TraitRepository;
 
 @Service
 public class TraitService {
 
-	private static final Logger logger = LoggerFactory.getLogger(NotificationConsumer.class);
+	private static final Logger logger = LoggerFactory.getLogger(TraitService.class);
 
 	@Autowired
 	private TraitRepository traitRepository;
