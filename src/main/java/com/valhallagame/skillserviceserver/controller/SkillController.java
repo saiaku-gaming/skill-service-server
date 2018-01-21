@@ -1,4 +1,4 @@
-package com.valhallagame.wardrobeserviceserver.controller;
+package com.valhallagame.skillserviceserver.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,56 +24,56 @@ import com.valhallagame.common.JS;
 import com.valhallagame.common.RestResponse;
 import com.valhallagame.common.rabbitmq.NotificationMessage;
 import com.valhallagame.common.rabbitmq.RabbitMQRouting;
-import com.valhallagame.wardrobeserviceclient.message.AddWardrobeItemParameter;
-import com.valhallagame.wardrobeserviceclient.message.GetWardrobeItemsParameter;
-import com.valhallagame.wardrobeserviceserver.model.WardrobeItem;
-import com.valhallagame.wardrobeserviceserver.service.WardrobeItemService;
+import com.valhallagame.skillserviceclient.message.AddSkillParameter;
+import com.valhallagame.skillserviceclient.message.GetSkillsParameter;
+import com.valhallagame.skillserviceserver.model.Skill;
+import com.valhallagame.skillserviceserver.service.SkillService;
 
 @Controller
-@RequestMapping(path = "/v1/wardrobe")
-public class WardrobeController {
+@RequestMapping(path = "/v1/skill")
+public class SkillController {
 
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
 	@Autowired
-	private WardrobeItemService wardrobeItemService;
+	private SkillService skillService;
 	
 	@Autowired
 	private CharacterServiceClient characterServiceClient;
 	
 
-	@RequestMapping(path = "/get-wardrobe-items", method = RequestMethod.POST)
+	@RequestMapping(path = "/get-skill-items", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<JsonNode> getWardrobeItems(@Valid @RequestBody GetWardrobeItemsParameter input) throws IOException {
+	public ResponseEntity<JsonNode> getSkills(@Valid @RequestBody GetSkillsParameter input) throws IOException {
 		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
 		Optional<CharacterData> characterOpt = characterResp.get();
 		if(!characterOpt.isPresent()) {
 			return JS.message(characterResp);
 		}
 		CharacterData character = characterOpt.get();
-		List<WardrobeItem> wardrobeItems = wardrobeItemService.getWardrobeItems(character.getCharacterName());
-		List<String> items = wardrobeItems.stream().map(WardrobeItem::getName).collect(Collectors.toList());
+		List<Skill> skills = skillService.getSkills(character.getCharacterName());
+		List<String> items = skills.stream().map(Skill::getName).collect(Collectors.toList());
 		return JS.message(HttpStatus.OK, items);
 	}
 
 
-	@RequestMapping(path = "/add-wardrobe-item", method = RequestMethod.POST)
+	@RequestMapping(path = "/add-skill-item", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<JsonNode> addWardrobeItem(@Valid @RequestBody AddWardrobeItemParameter input) {
+	public ResponseEntity<JsonNode> addSkill(@Valid @RequestBody AddSkillParameter input) {
 
 		// Duplicate protection
-		List<WardrobeItem> wardrobeItems = wardrobeItemService.getWardrobeItems(input.getCharacterName().toLowerCase());
-		List<String> items = wardrobeItems.stream().map(WardrobeItem::getName).collect(Collectors.toList());
+		List<Skill> skills = skillService.getSkills(input.getCharacterName().toLowerCase());
+		List<String> items = skills.stream().map(Skill::getName).collect(Collectors.toList());
 		if (items.contains(input.getName().name())) {
 			return JS.message(HttpStatus.ALREADY_REPORTED, "Already in store");
 		}
 
-		wardrobeItemService.saveWardrobeItem(new WardrobeItem(input.getName().name(), input.getCharacterName().toLowerCase()));
-		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.WARDROBE.name(),
-				RabbitMQRouting.Wardrobe.ADD_WARDROBE_ITEM.name(),
-				new NotificationMessage(input.getCharacterName(), "wardrobe item added"));
+		skillService.saveSkill(new Skill(input.getName().name(), input.getCharacterName().toLowerCase()));
+		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.SKILL.name(),
+				RabbitMQRouting.Skill.ADD.name(),
+				new NotificationMessage(input.getCharacterName(), "skill item added"));
 
-		return JS.message(HttpStatus.OK, "Wardrobe item added");
+		return JS.message(HttpStatus.OK, "Skill item added");
 	}
 }

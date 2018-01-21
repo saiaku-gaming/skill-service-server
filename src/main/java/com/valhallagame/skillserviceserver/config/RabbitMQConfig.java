@@ -1,4 +1,4 @@
-package com.valhallagame.wardrobeserviceserver.config;
+package com.valhallagame.skillserviceserver.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -13,7 +13,7 @@ import com.valhallagame.common.rabbitmq.RabbitMQRouting;
 
 @Configuration
 public class RabbitMQConfig {
-	// Wardrobe configs
+	// Skill configs
 	@Bean
 	public DirectExchange characterExchange() {
 		return new DirectExchange(RabbitMQRouting.Exchange.CHARACTER.name());
@@ -25,23 +25,23 @@ public class RabbitMQConfig {
 	}
 
 	@Bean
-	public Queue wardrobeFeatAddQueue() {
-		return new Queue("wardrobeFeatAddQueue");
+	public Queue skillFeatAddQueue() {
+		return new Queue("skillFeatAddQueue");
 	}
 
 	@Bean
-	public Binding bindingFeatAdd(DirectExchange featExchange, Queue wardrobeFeatAddQueue) {
-		return BindingBuilder.bind(wardrobeFeatAddQueue).to(featExchange).with(RabbitMQRouting.Feat.ADD);
+	public Binding bindingFeatAdd(DirectExchange featExchange, Queue skillFeatAddQueue) {
+		return BindingBuilder.bind(skillFeatAddQueue).to(featExchange).with(RabbitMQRouting.Feat.ADD);
 	}
 
 	@Bean
-	public Queue wardrobeCharacterDeleteQueue() {
-		return new Queue("wardrobeCharacterDeleteQueue");
+	public Queue skillCharacterDeleteQueue() {
+		return new Queue("skillCharacterDeleteQueue");
 	}
 
 	@Bean
-	public Binding bindingCharacterDeleted(DirectExchange characterExchange, Queue wardrobeCharacterDeleteQueue) {
-		return BindingBuilder.bind(wardrobeCharacterDeleteQueue).to(characterExchange)
+	public Binding bindingCharacterDeleted(DirectExchange characterExchange, Queue skillCharacterDeleteQueue) {
+		return BindingBuilder.bind(skillCharacterDeleteQueue).to(characterExchange)
 				.with(RabbitMQRouting.Character.DELETE);
 	}
 

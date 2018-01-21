@@ -1,4 +1,4 @@
-package com.valhallagame.wardrobeserviceserver.rabbitmq;
+package com.valhallagame.skillserviceserver.rabbitmq;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.valhallagame.common.rabbitmq.NotificationMessage;
-import com.valhallagame.wardrobeserviceserver.model.WardrobeItem;
-import com.valhallagame.wardrobeserviceserver.service.WardrobeItemService;
+import com.valhallagame.skillserviceserver.model.Skill;
+import com.valhallagame.skillserviceserver.service.SkillService;
 
 @Component
 public class NotificationConsumer {
@@ -18,23 +18,23 @@ public class NotificationConsumer {
 	private static final Logger logger = LoggerFactory.getLogger(NotificationConsumer.class);
 
 	@Autowired
-	WardrobeItemService wardrobeItemService;
+	SkillService skillService;
 
-	@RabbitListener(queues = { "#{wardrobeCharacterDeleteQueue.name}" })
+	@RabbitListener(queues = { "#{skillCharacterDeleteQueue.name}" })
 	public void receiveCharacterDelete(NotificationMessage message) {
 		String characterName = (String) message.getData().get("characterName");
-		List<WardrobeItem> wardrobeItems = wardrobeItemService.getWardrobeItems(characterName);
-		for (WardrobeItem wardrobeItem : wardrobeItems) {
-			wardrobeItemService.deleteWardrobeItem(wardrobeItem);
+		List<Skill> skills = skillService.getSkills(characterName);
+		for (Skill skill : skills) {
+			skillService.deleteSkill(skill);
 		}
 	}
 
-	@RabbitListener(queues = { "#{wardrobeFeatAddQueue.name}" })
+	@RabbitListener(queues = { "#{skillFeatAddQueue.name}" })
 	public void receiveFeatAdd(NotificationMessage message) {
 		logger.info("Received fead add notification with message: {}", message.toString());
 		String featName = (String) message.getData().get("feat");
 		String characterName = (String) message.getData().get("characterName");
 
-		wardrobeItemService.handleFeatAdding(characterName, featName);
+		skillService.handleFeatAdding(characterName, featName);
 	}
 }

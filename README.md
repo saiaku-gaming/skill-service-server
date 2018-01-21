@@ -1,1 +1,1 @@
-# wardrobe-service-server
+# skill-service-server

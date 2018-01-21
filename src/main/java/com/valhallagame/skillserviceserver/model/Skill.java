@@ -1,4 +1,4 @@
-package com.valhallagame.wardrobeserviceserver.model;
+package com.valhallagame.skillserviceserver.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "wardrobe_item")
-public class WardrobeItem {
+@Table(name = "skill")
+public class Skill {
 	@Id
-	@SequenceGenerator(name = "wardrobe_item_wardrobe_item_id_seq", sequenceName = "wardrobe_item_wardrobe_item_id_seq", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wardrobe_item_wardrobe_item_id_seq")
-	@Column(name = "wardrobe_item_id", updatable = false)
+	@SequenceGenerator(name = "skill_skill_id_seq", sequenceName = "skill_skill_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skill_skill_id_seq")
+	@Column(name = "skill_item_id", updatable = false)
 	private Integer id;
 
 	@Column(name = "name")
@@ -30,7 +30,7 @@ public class WardrobeItem {
 	@Column(name = "character_owner")
 	private String characterOwner;
 
-	public WardrobeItem(String name, String characterOwner) {
+	public Skill(String name, String characterOwner) {
 		this.name = name;
 		this.characterOwner = characterOwner;
 	}
