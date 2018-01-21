@@ -26,6 +26,9 @@ import com.valhallagame.common.rabbitmq.NotificationMessage;
 import com.valhallagame.common.rabbitmq.RabbitMQRouting;
 import com.valhallagame.traitserviceclient.message.AddTraitParameter;
 import com.valhallagame.traitserviceclient.message.GetTraitsParameter;
+import com.valhallagame.traitserviceclient.message.TraitData;
+import com.valhallagame.traitserviceclient.message.TraitType;
+import com.valhallagame.traitserviceclient.message.UpdateTraitBarIndexParameter;
 import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.service.TraitService;
 
@@ -43,7 +46,7 @@ public class TraitController {
 	private CharacterServiceClient characterServiceClient;
 	
 
-	@RequestMapping(path = "/get-trait-items", method = RequestMethod.POST)
+	@RequestMapping(path = "/get-traits", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> getTraits(@Valid @RequestBody GetTraitsParameter input) throws IOException {
 		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
@@ -52,13 +55,41 @@ public class TraitController {
 			return JS.message(characterResp);
 		}
 		CharacterData character = characterOpt.get();
+		
 		List<Trait> traits = traitService.getTraits(character.getCharacterName());
-		List<String> items = traits.stream().map(Trait::getName).collect(Collectors.toList());
-		return JS.message(HttpStatus.OK, items);
+		
+		List<TraitData> traitDatas = convertToData(traits);
+		
+		return JS.message(HttpStatus.OK, traitDatas);
 	}
 
 
-	@RequestMapping(path = "/add-trait-item", method = RequestMethod.POST)
+	private List<TraitData> convertToData(List<Trait> traits) {
+		return traits.stream()
+				.map(t -> new TraitData(TraitType.valueOf(t.getName()), t.getBarIndex()))
+				.collect(Collectors.toList());
+	}
+
+	@RequestMapping(path = "/update-trait-bar-index", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<JsonNode> addTrait(@Valid @RequestBody UpdateTraitBarIndexParameter input) throws IOException {
+
+		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
+		Optional<CharacterData> characterOpt = characterResp.get();
+		if(!characterOpt.isPresent()) {
+			return JS.message(characterResp);
+		}
+		CharacterData character = characterOpt.get();
+	
+		
+		
+		traitService.updateTraitBarIndex(character.getCharacterName(), input.getName(), input.getBarIndex());
+
+		return JS.message(HttpStatus.OK, "Trait updated");
+	}
+	
+	
+	@RequestMapping(path = "/add-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> addTrait(@Valid @RequestBody AddTraitParameter input) {
 
@@ -72,8 +103,8 @@ public class TraitController {
 		traitService.saveTrait(new Trait(input.getName().name(), input.getCharacterName().toLowerCase()));
 		rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(),
 				RabbitMQRouting.Trait.ADD.name(),
-				new NotificationMessage(input.getCharacterName(), "trait item added"));
+				new NotificationMessage(input.getCharacterName(), "trait added"));
 
-		return JS.message(HttpStatus.OK, "Trait item added");
+		return JS.message(HttpStatus.OK, "Trait added");
 	}
 }

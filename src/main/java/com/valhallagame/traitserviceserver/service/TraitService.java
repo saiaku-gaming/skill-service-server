@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.valhallagame.featserviceclient.message.FeatName;
+import com.valhallagame.traitserviceclient.message.TraitType;
 import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.repository.TraitRepository;
 
@@ -37,6 +38,14 @@ public class TraitService {
 		default:
 			logger.info("No can do!");
 			break;
+		}
+	}
+
+	public void updateTraitBarIndex(String characterName, TraitType traitType, int barIndex) {
+		Trait trait = traitRepository.findByCharacterOwnerAndName(characterName, traitType.name());
+		if(trait != null) {
+			trait.setBarIndex(barIndex);
+			saveTrait(trait);
 		}
 	}
 }

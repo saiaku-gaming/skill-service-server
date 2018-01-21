@@ -21,7 +21,7 @@ public class Trait {
 	@Id
 	@SequenceGenerator(name = "trait_trait_id_seq", sequenceName = "trait_trait_id_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trait_trait_id_seq")
-	@Column(name = "trait_item_id", updatable = false)
+	@Column(name = "trait_id", updatable = false)
 	private Integer id;
 
 	@Column(name = "name")
@@ -30,6 +30,9 @@ public class Trait {
 	@Column(name = "character_owner")
 	private String characterOwner;
 
+	@Column(name = "bar_index")
+	private int barIndex;
+	
 	public Trait(String name, String characterOwner) {
 		this.name = name;
 		this.characterOwner = characterOwner;

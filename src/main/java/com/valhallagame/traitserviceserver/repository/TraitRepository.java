@@ -8,4 +8,6 @@ import com.valhallagame.traitserviceserver.model.Trait;
 
 public interface TraitRepository extends JpaRepository<Trait, Integer> {
 	public List<Trait> findByCharacterOwner(String characterOwner);
+
+	public Trait findByCharacterOwnerAndName(String characterName, String name);
 }
