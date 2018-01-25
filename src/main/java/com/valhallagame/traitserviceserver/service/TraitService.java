@@ -41,7 +41,17 @@ public class TraitService {
 		}
 	}
 
-	public void updateTraitBarIndex(String characterName, TraitType traitType, int barIndex) {
+	public void saveTraitBarIndex(String characterName, TraitType traitType, int barIndex) {
+		
+		//Clean out old traits in that index (Should be done in db i guess.)
+		List<Trait> traits = traitRepository.findByCharacterOwnerAndBarIndex(characterName, barIndex);
+		traits.forEach(trait -> {
+			if(trait.getBarIndex() != -1) {
+				trait.setBarIndex(-1);
+				saveTrait(trait);
+			}
+		});
+		
 		Trait trait = traitRepository.findByCharacterOwnerAndName(characterName, traitType.name());
 		if(trait != null) {
 			trait.setBarIndex(barIndex);

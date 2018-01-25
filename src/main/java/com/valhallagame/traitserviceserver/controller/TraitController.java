@@ -28,7 +28,7 @@ import com.valhallagame.traitserviceclient.message.AddTraitParameter;
 import com.valhallagame.traitserviceclient.message.GetTraitsParameter;
 import com.valhallagame.traitserviceclient.message.TraitData;
 import com.valhallagame.traitserviceclient.message.TraitType;
-import com.valhallagame.traitserviceclient.message.UpdateTraitBarIndexParameter;
+import com.valhallagame.traitserviceclient.message.SaveTraitBarIndexParameter;
 import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.service.TraitService;
 
@@ -75,9 +75,9 @@ public class TraitController {
 				.collect(Collectors.toList());
 	}
 
-	@RequestMapping(path = "/update-trait-bar-index", method = RequestMethod.POST)
+	@RequestMapping(path = "/save-trait-bar-index", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<JsonNode> addTrait(@Valid @RequestBody UpdateTraitBarIndexParameter input) throws IOException {
+	public ResponseEntity<JsonNode> saveTraitBarIndex(@Valid @RequestBody SaveTraitBarIndexParameter input) throws IOException {
 
 		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
 		Optional<CharacterData> characterOpt = characterResp.get();
@@ -86,9 +86,7 @@ public class TraitController {
 		}
 		CharacterData character = characterOpt.get();
 	
-		
-		
-		traitService.updateTraitBarIndex(character.getCharacterName(), input.getName(), input.getBarIndex());
+		traitService.saveTraitBarIndex(character.getCharacterName(), input.getName(), input.getBarIndex());
 
 		return JS.message(HttpStatus.OK, "Trait updated");
 	}

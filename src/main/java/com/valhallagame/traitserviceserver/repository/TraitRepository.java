@@ -10,4 +10,6 @@ public interface TraitRepository extends JpaRepository<Trait, Integer> {
 	public List<Trait> findByCharacterOwner(String characterOwner);
 
 	public Trait findByCharacterOwnerAndName(String characterName, String name);
+	
+	public List<Trait> findByCharacterOwnerAndBarIndex(String characterName, int barIndex);
 }
