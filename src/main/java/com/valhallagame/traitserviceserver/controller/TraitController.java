@@ -57,12 +57,6 @@ public class TraitController {
 		CharacterData character = characterOpt.get();
 		
 		List<Trait> traits = traitService.getTraits(character.getCharacterName());
-		if(traits.isEmpty()) {
-			Trait trait = new Trait();
-			trait.setBarIndex(3);
-			trait.setName(TraitType.KICK.name());
-			traits.add(trait);
-		}
 		List<TraitData> traitDatas = convertToData(traits);
 		
 		return JS.message(HttpStatus.OK, traitDatas);

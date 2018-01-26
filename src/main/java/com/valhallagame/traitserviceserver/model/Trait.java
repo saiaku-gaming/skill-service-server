@@ -36,5 +36,6 @@ public class Trait {
 	public Trait(String name, String characterOwner) {
 		this.name = name;
 		this.characterOwner = characterOwner;
+		this.barIndex = -1; //-1 means not in bar. 
 	}
 }
