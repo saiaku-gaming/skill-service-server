@@ -29,6 +29,7 @@ import com.valhallagame.traitserviceclient.message.GetTraitsParameter;
 import com.valhallagame.traitserviceclient.message.TraitData;
 import com.valhallagame.traitserviceclient.message.TraitType;
 import com.valhallagame.traitserviceclient.message.SaveTraitBarIndexParameter;
+import com.valhallagame.traitserviceclient.message.TraitBarItem;
 import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.service.TraitService;
 
@@ -57,16 +58,20 @@ public class TraitController {
 		CharacterData character = characterOpt.get();
 		
 		List<Trait> traits = traitService.getTraits(character.getCharacterName());
-		List<TraitData> traitDatas = convertToData(traits);
+		TraitData traitData = convertToData(traits);
 		
-		return JS.message(HttpStatus.OK, traitDatas);
+		return JS.message(HttpStatus.OK, traitData);
 	}
 
 
-	private List<TraitData> convertToData(List<Trait> traits) {
-		return traits.stream()
-				.map(t -> new TraitData(TraitType.valueOf(t.getName()), t.getBarIndex()))
+	private TraitData convertToData(List<Trait> traits) {
+		List<TraitBarItem> barItems = traits.stream().filter(t -> t.getBarIndex() >= 0)
+				.map(t -> new TraitBarItem(TraitType.valueOf(t.getName()), t.getBarIndex()))
 				.collect(Collectors.toList());
+		
+		List<TraitType> ownedTraits = traits.stream().map(t -> TraitType.valueOf(t.getName()))
+				.collect(Collectors.toList());
+		return new TraitData(ownedTraits, barItems);
 	}
 
 	@RequestMapping(path = "/save-trait-bar-index", method = RequestMethod.POST)
@@ -79,9 +84,7 @@ public class TraitController {
 			return JS.message(characterResp);
 		}
 		CharacterData character = characterOpt.get();
-	
 		traitService.saveTraitBarIndex(character.getCharacterName(), input.getName(), input.getBarIndex());
-
 		return JS.message(HttpStatus.OK, "Trait updated");
 	}
 	

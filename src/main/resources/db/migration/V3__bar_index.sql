@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX trait_bar ON trait(bar_index, character_owner) WHERE (bar_index != -1);
