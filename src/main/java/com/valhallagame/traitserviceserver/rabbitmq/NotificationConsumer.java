@@ -1,5 +1,6 @@
 package com.valhallagame.traitserviceserver.rabbitmq;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -30,8 +31,8 @@ public class NotificationConsumer {
 	}
 
 	@RabbitListener(queues = { "#{traitFeatAddQueue.name}" })
-	public void receiveFeatAdd(NotificationMessage message) {
-		logger.info("Received fead add notification with message: {}", message.toString());
+	public void receiveFeatAdd(NotificationMessage message) throws IOException {
+		logger.info("Received fead add notification with message: {}", message);
 		String featName = (String) message.getData().get("feat");
 		String characterName = (String) message.getData().get("characterName");
 

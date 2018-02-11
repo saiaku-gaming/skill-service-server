@@ -1,0 +1,1 @@
+ALTER TABLE trait RENAME character_owner TO character_name;

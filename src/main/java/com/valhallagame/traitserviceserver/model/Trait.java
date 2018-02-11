@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.valhallagame.traitserviceclient.message.TraitType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,18 +26,25 @@ public class Trait {
 	@Column(name = "trait_id", updatable = false)
 	private Integer id;
 
+	/**
+	 * Maps to a trait type. See  {@link #getTraitType()}
+	 */
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "character_owner")
-	private String characterOwner;
+	@Column(name = "character_name")
+	private String characterName;
 
 	@Column(name = "bar_index")
 	private int barIndex;
 	
-	public Trait(String name, String characterOwner) {
-		this.name = name;
-		this.characterOwner = characterOwner;
+	public Trait(TraitType traitType, String characterName) {
+		this.name = traitType.name();
+		this.characterName = characterName;
 		this.barIndex = -1; //-1 means not in bar. 
+	}
+	
+	public TraitType getTraitType(){
+		return TraitType.valueOf(this.getName());
 	}
 }
