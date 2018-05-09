@@ -79,9 +79,10 @@ public class TraitController {
 			return JS.message(characterResp);
 		}
 		CharacterData character = characterOpt.get();
-		boolean success = traitService.saveTraitBarIndex(character.getCharacterName(), input.getName(), input.getBarIndex());
-		if(!success) {
-			return JS.message(HttpStatus.FORBIDDEN, "Could not update trait index!");	
+		try {
+			traitService.saveTraitBarIndex(character.getCharacterName(), input.getName(), input.getBarIndex());
+		} catch (IllegalAccessError e) {
+			return JS.message(HttpStatus.FORBIDDEN, e.getMessage());	
 		}
 		return JS.message(HttpStatus.OK, "Success");
 	}

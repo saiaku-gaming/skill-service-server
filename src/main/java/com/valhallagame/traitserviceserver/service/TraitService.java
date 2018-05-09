@@ -30,7 +30,7 @@ public class TraitService {
 
 	@Autowired
 	private TraitRepository traitRepository;
-	
+
 	@Autowired
 	private CharacterServiceClient characterServiceClient;
 
@@ -60,7 +60,7 @@ public class TraitService {
 		}
 	}
 
-	public boolean saveTraitBarIndex(String characterName, TraitType traitType, int barIndex) {
+	public void saveTraitBarIndex(String characterName, TraitType traitType, int barIndex) {
 
 		// Clean out old traits in that index (Should be done in db i guess.)
 		List<Trait> traits = traitRepository.findByCharacterNameAndBarIndex(characterName, barIndex);
@@ -72,12 +72,11 @@ public class TraitService {
 		});
 
 		Trait trait = traitRepository.findByCharacterNameAndName(characterName, traitType.name());
-		if (trait != null) {
-			trait.setBarIndex(barIndex);
-			saveTrait(trait);
-			return true;
+		if (trait == null) {
+			throw new IllegalAccessError("Character " + characterName + " does not have trait " + traitType);
 		}
-		return false;
+		trait.setBarIndex(barIndex);
+		saveTrait(trait);
 	}
 
 	public boolean hasTraitUnlocked(TraitType traitType, String characterName) {
@@ -86,17 +85,18 @@ public class TraitService {
 
 	public void lockTrait(Trait trait) throws IOException {
 		if (hasTraitUnlocked(trait.getTraitType(), trait.getCharacterName())) {
-			
+
 			trait = traitRepository.findByCharacterNameAndName(trait.getCharacterName(), trait.getName());
 			traitRepository.delete(trait);
-			
+
 			RestResponse<CharacterData> characterResp = characterServiceClient.getCharacter(trait.getCharacterName());
 			Optional<CharacterData> characterOpt = characterResp.get();
-			if(!characterOpt.isPresent()) {
+			if (!characterOpt.isPresent()) {
 				return;
 			}
-			
-			NotificationMessage message = new NotificationMessage(characterOpt.get().getOwnerUsername(), "trait locked");
+
+			NotificationMessage message = new NotificationMessage(characterOpt.get().getOwnerUsername(),
+					"trait locked");
 			message.addData("traitName", trait.getName());
 			rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(), RabbitMQRouting.Trait.LOCK.name(),
 					message);
@@ -106,14 +106,15 @@ public class TraitService {
 	public void unlockTrait(Trait trait) throws IOException {
 		if (!hasTraitUnlocked(trait.getTraitType(), trait.getCharacterName())) {
 			saveTrait(trait);
-			
+
 			RestResponse<CharacterData> characterResp = characterServiceClient.getCharacter(trait.getCharacterName());
 			Optional<CharacterData> characterOpt = characterResp.get();
-			if(!characterOpt.isPresent()) {
+			if (!characterOpt.isPresent()) {
 				return;
 			}
-			
-			NotificationMessage message = new NotificationMessage(characterOpt.get().getOwnerUsername(), "trait unlocked");
+
+			NotificationMessage message = new NotificationMessage(characterOpt.get().getOwnerUsername(),
+					"trait unlocked");
 			message.addData("traitName", trait.getName());
 			rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(), RabbitMQRouting.Trait.UNLOCK.name(),
 					message);
