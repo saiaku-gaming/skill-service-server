@@ -1,0 +1,2 @@
+ALTER TABLE trait DROP COLUMN bar_index;
+ALTER TABLE trait ADD COLUMN skilled BOOLEAN NOT NULL DEFAULT false;

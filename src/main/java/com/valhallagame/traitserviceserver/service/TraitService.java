@@ -60,25 +60,6 @@ public class TraitService {
 		}
 	}
 
-	public void saveTraitBarIndex(String characterName, TraitType traitType, int barIndex) {
-
-		// Clean out old traits in that index (Should be done in db i guess.)
-		List<Trait> traits = traitRepository.findByCharacterNameAndBarIndex(characterName, barIndex);
-		traits.forEach(trait -> {
-			if (trait.getBarIndex() != -1) {
-				trait.setBarIndex(-1);
-				saveTrait(trait);
-			}
-		});
-
-		Trait trait = traitRepository.findByCharacterNameAndName(characterName, traitType.name());
-		if (trait == null) {
-			throw new IllegalAccessError("Character " + characterName + " does not have trait " + traitType);
-		}
-		trait.setBarIndex(barIndex);
-		saveTrait(trait);
-	}
-
 	public boolean hasTraitUnlocked(TraitType traitType, String characterName) {
 		return getTraits(characterName).stream().map(Trait::getName).anyMatch(t -> traitType.name().equals(t));
 	}
@@ -86,7 +67,7 @@ public class TraitService {
 	public void lockTrait(Trait trait) throws IOException {
 		if (hasTraitUnlocked(trait.getTraitType(), trait.getCharacterName())) {
 
-			trait = traitRepository.findByCharacterNameAndName(trait.getCharacterName(), trait.getName());
+			trait = traitRepository.findByCharacterNameAndName(trait.getCharacterName(), trait.getName()).orElse(null);
 			traitRepository.delete(trait);
 
 			RestResponse<CharacterData> characterResp = characterServiceClient.getCharacter(trait.getCharacterName());
@@ -119,5 +100,19 @@ public class TraitService {
 			rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(), RabbitMQRouting.Trait.UNLOCK.name(),
 					message);
 		}
+	}
+
+	public void skillTrait(Trait trait) {
+		trait.setSkilled(true);
+		trait = saveTrait(trait);
+	}
+
+	public void unskillTrait(Trait trait) {
+		trait.setSkilled(false);
+		trait = saveTrait(trait);
+	}
+
+	public Optional<Trait> getUnlockedTrait(String characterName, TraitType traitType) {
+		return traitRepository.findByCharacterNameAndName(characterName, traitType.name());
 	}
 }

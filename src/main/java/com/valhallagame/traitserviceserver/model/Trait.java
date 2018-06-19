@@ -27,7 +27,7 @@ public class Trait {
 	private Integer id;
 
 	/**
-	 * Maps to a trait type. See  {@link #getTraitType()}
+	 * Maps to a trait type. See {@link #getTraitType()}
 	 */
 	@Column(name = "name")
 	private String name;
@@ -35,16 +35,16 @@ public class Trait {
 	@Column(name = "character_name")
 	private String characterName;
 
-	@Column(name = "bar_index")
-	private int barIndex;
-	
+	@Column(name = "skilled")
+	private Boolean skilled;
+
 	public Trait(TraitType traitType, String characterName) {
 		this.name = traitType.name();
 		this.characterName = characterName;
-		this.barIndex = -1; //-1 means not in bar. 
+		this.skilled = false;
 	}
-	
-	public TraitType getTraitType(){
+
+	public TraitType getTraitType() {
 		return TraitType.valueOf(this.getName());
 	}
 }
