@@ -1,12 +1,13 @@
 package com.valhallagame.traitserviceserver.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.valhallagame.characterserviceclient.CharacterServiceClient;
+import com.valhallagame.characterserviceclient.model.CharacterData;
+import com.valhallagame.common.JS;
+import com.valhallagame.common.RestResponse;
+import com.valhallagame.traitserviceclient.message.*;
+import com.valhallagame.traitserviceserver.model.Trait;
+import com.valhallagame.traitserviceserver.service.TraitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,20 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.valhallagame.characterserviceclient.CharacterServiceClient;
-import com.valhallagame.characterserviceclient.model.CharacterData;
-import com.valhallagame.common.JS;
-import com.valhallagame.common.RestResponse;
-import com.valhallagame.traitserviceclient.message.GetTraitsParameter;
-import com.valhallagame.traitserviceclient.message.LockTraitParameter;
-import com.valhallagame.traitserviceclient.message.SkillTraitParameter;
-import com.valhallagame.traitserviceclient.message.TraitData;
-import com.valhallagame.traitserviceclient.message.TraitType;
-import com.valhallagame.traitserviceclient.message.UnlockTraitParameter;
-import com.valhallagame.traitserviceclient.message.UnskillTraitParameter;
-import com.valhallagame.traitserviceserver.model.Trait;
-import com.valhallagame.traitserviceserver.service.TraitService;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path = "/v1/trait")
@@ -61,10 +53,9 @@ public class TraitController {
 		List<TraitType> ownedTraits = traits.stream().map(t -> TraitType.valueOf(t.getName()))
 				.collect(Collectors.toList());
 		// @formatter:off
-		List<TraitType> skilledTraits = traits.stream()
-				.filter(t -> t.getSkilled())
-				.map(Trait::getName)
-				.map(TraitType::valueOf)
+		List<SkilledTraitData> skilledTraits = traits.stream()
+				.filter(Trait::getClaimed)
+				.map(t -> new SkilledTraitData(TraitType.valueOf(t.getName()), AttributeType.valueOf(t.getSelectedAttribute())))
 				.collect(Collectors.toList());
 		// @formatter:on
 		return new TraitData(ownedTraits, skilledTraits);
@@ -112,11 +103,11 @@ public class TraitController {
 		}
 
 		Trait trait = unlockedTrait.get();
-		if (trait.getSkilled()) {
+		if (trait.getClaimed()) {
 			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is already skilled.");
 		}
 
-		traitService.skillTrait(trait);
+		traitService.skillTrait(trait, input.getSelectedAttribute());
 
 		return JS.message(HttpStatus.OK, "Trait skilled");
 	}
@@ -131,7 +122,7 @@ public class TraitController {
 		}
 
 		Trait trait = unlockedTrait.get();
-		if (!trait.getSkilled()) {
+		if (!trait.getClaimed()) {
 			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is already unskilled.");
 		}
 

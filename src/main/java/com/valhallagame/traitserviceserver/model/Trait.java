@@ -1,18 +1,11 @@
 package com.valhallagame.traitserviceserver.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import com.valhallagame.traitserviceclient.message.TraitType;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -35,13 +28,17 @@ public class Trait {
 	@Column(name = "character_name")
 	private String characterName;
 
-	@Column(name = "skilled")
-	private Boolean skilled;
+	@Column(name = "claimed")
+	private Boolean claimed;
+
+	@Column(name = "selected_attribute")
+	private String selectedAttribute;
 
 	public Trait(TraitType traitType, String characterName) {
 		this.name = traitType.name();
 		this.characterName = characterName;
-		this.skilled = false;
+		this.claimed = false;
+		this.selectedAttribute = "";
 	}
 
 	public TraitType getTraitType() {

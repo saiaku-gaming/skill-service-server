@@ -1,24 +1,24 @@
 package com.valhallagame.traitserviceserver.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.valhallagame.characterserviceclient.CharacterServiceClient;
 import com.valhallagame.characterserviceclient.model.CharacterData;
 import com.valhallagame.common.RestResponse;
 import com.valhallagame.common.rabbitmq.NotificationMessage;
 import com.valhallagame.common.rabbitmq.RabbitMQRouting;
 import com.valhallagame.featserviceclient.message.FeatName;
+import com.valhallagame.traitserviceclient.message.AttributeType;
 import com.valhallagame.traitserviceclient.message.TraitType;
 import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.repository.TraitRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TraitService {
@@ -102,14 +102,16 @@ public class TraitService {
 		}
 	}
 
-	public void skillTrait(Trait trait) {
-		trait.setSkilled(true);
-		trait = saveTrait(trait);
+	public Trait skillTrait(Trait trait, AttributeType selectedAttribute) {
+		trait.setClaimed(true);
+		trait.setSelectedAttribute(selectedAttribute.name());
+		return saveTrait(trait);
 	}
 
-	public void unskillTrait(Trait trait) {
-		trait.setSkilled(false);
-		trait = saveTrait(trait);
+	public Trait unskillTrait(Trait trait) {
+		trait.setClaimed(false);
+		trait.setSelectedAttribute(null);
+		return saveTrait(trait);
 	}
 
 	public Optional<Trait> getUnlockedTrait(String characterName, TraitType traitType) {
