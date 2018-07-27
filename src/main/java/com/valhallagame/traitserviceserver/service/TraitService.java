@@ -53,6 +53,9 @@ public class TraitService {
 		case EINHARJER_SLAYER:
 			unlockTrait(new Trait(TraitType.FROST_BLAST, characterName));
 			break;
+		case MISSVEDEN_THE_CHIEFTAINS_DEMISE:
+			unlockTrait(new Trait(TraitType.TOURETTES, characterName));
+			unlockTrait(new Trait(TraitType.PARANOIA, characterName));
 		case TRAINING_EFFICIENCY:
 		default:
 			logger.info("No can do!");
