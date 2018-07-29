@@ -50,9 +50,6 @@ public class TraitService {
 	public void handleFeatAdding(String characterName, String featName) throws IOException {
 		logger.info("Handle Feat Adding characterName: {}, featName: {}", characterName, featName);
 		switch (FeatName.valueOf(featName)) {
-		case EINHARJER_SLAYER:
-			unlockTrait(new Trait(TraitType.FROST_BLAST, characterName));
-			break;
 		case MISSVEDEN_THE_CHIEFTAINS_DEMISE:
 			unlockTrait(new Trait(TraitType.TOURETTES, characterName));
 			unlockTrait(new Trait(TraitType.PARANOIA, characterName));
