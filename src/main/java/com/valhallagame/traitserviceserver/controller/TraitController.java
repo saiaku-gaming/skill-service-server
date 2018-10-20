@@ -55,7 +55,14 @@ public class TraitController {
 		// @formatter:off
 		List<SkilledTraitData> skilledTraits = traits.stream()
 				.filter(Trait::getClaimed)
-				.map(t -> new SkilledTraitData(TraitType.valueOf(t.getName()), AttributeType.valueOf(t.getSelectedAttribute())))
+				.map(t -> new SkilledTraitData(
+						TraitType.valueOf(t.getName()),
+						AttributeType.valueOf(t.getSelectedAttribute()),
+						t.getPositionX(),
+						t.getPositionY(),
+						t.getSpecialization(),
+						t.getSpecializationPositionX(),
+						t.getSpecializationPositionY()))
 				.collect(Collectors.toList());
 		// @formatter:on
 		return new TraitData(ownedTraits, skilledTraits);
@@ -107,7 +114,7 @@ public class TraitController {
 			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is already skilled.");
 		}
 
-		traitService.skillTrait(trait, input.getSelectedAttribute());
+		traitService.skillTrait(trait, input.getSelectedAttribute(), input.getPositionX(), input.getPositionY());
 
 		return JS.message(HttpStatus.OK, "Trait skilled");
 	}
@@ -129,5 +136,43 @@ public class TraitController {
 		traitService.unskillTrait(trait);
 
 		return JS.message(HttpStatus.OK, "Trait unskilled");
+	}
+
+	@RequestMapping(path = "/specialize-trait", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<JsonNode> specializeTrait(@Valid @RequestBody SpecializeTraitParameter input) {
+		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
+
+		if (!unlockedTrait.isPresent()) {
+			return JS.message(HttpStatus.NOT_FOUND, "Unable to find trait: " + input.getName().name());
+		}
+
+		Trait trait = unlockedTrait.get();
+		if (!trait.getClaimed()) {
+			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is not skilled.");
+		}
+
+		traitService.specializeTrait(trait, input.getSpecialization(), input.getPositionX(), input.getPositionY());
+
+		return JS.message(HttpStatus.OK, "Trait specialized");
+	}
+
+	@RequestMapping(path = "/unspecialize-trait", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<JsonNode> unspecializeTrait(@Valid @RequestBody UnspecializeTraitParameter input) {
+		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
+
+		if (!unlockedTrait.isPresent()) {
+			return JS.message(HttpStatus.NOT_FOUND, "Unable to find trait: " + input.getName().name());
+		}
+
+		Trait trait = unlockedTrait.get();
+		if (!trait.getClaimed()) {
+			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is not skilled.");
+		}
+
+		traitService.unspecializeTrait(trait);
+
+		return JS.message(HttpStatus.OK, "Trait unspecialized");
 	}
 }

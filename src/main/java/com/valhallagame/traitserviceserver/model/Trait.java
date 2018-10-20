@@ -34,6 +34,18 @@ public class Trait {
 	@Column(name = "selected_attribute")
 	private String selectedAttribute;
 
+	@Column(name = "position_x")
+	private Integer positionX;
+	@Column(name = "position_y")
+	private Integer positionY;
+
+	@Column(name = "specialization")
+	private Integer specialization;
+	@Column(name = "specialization_position_x")
+	private Integer specializationPositionX;
+	@Column(name = "specialization_position_y")
+	private Integer specializationPositionY;
+
 	public Trait(TraitType traitType, String characterName) {
 		this.name = traitType.name();
 		this.characterName = characterName;
