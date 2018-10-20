@@ -105,8 +105,8 @@ public class TraitService {
 	public Trait skillTrait(Trait trait, AttributeType selectedAttribute, Integer positionX, Integer positionY) {
 		trait.setClaimed(true);
 		trait.setSelectedAttribute(selectedAttribute.name());
-		trait.setPositionX(positionX);
-		trait.setPositionY(positionY);
+		trait.setPositionX(positionX == null ? -1 : positionX);
+		trait.setPositionY(positionY == null ? -1 : positionY);
 		return saveTrait(trait);
 	}
 
@@ -124,9 +124,9 @@ public class TraitService {
 	}
 
 	public Trait unspecializeTrait(Trait trait) {
-		trait.setSpecialization(null);
-		trait.setSpecializationPositionX(null);
-		trait.setSpecializationPositionY(null);
+		trait.setSpecialization(-1);
+		trait.setSpecializationPositionX(-1);
+		trait.setSpecializationPositionY(-1);
 		return saveTrait(trait);
 	}
 
