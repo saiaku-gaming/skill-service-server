@@ -107,6 +107,9 @@ public class TraitService {
 		trait.setSelectedAttribute(selectedAttribute.name());
 		trait.setPositionX(positionX == null ? -1 : positionX);
 		trait.setPositionY(positionY == null ? -1 : positionY);
+		trait.setSpecialization(-1);
+		trait.setSpecializationPositionX(-1);
+		trait.setSpecializationPositionY(-1);
 		return saveTrait(trait);
 	}
 
