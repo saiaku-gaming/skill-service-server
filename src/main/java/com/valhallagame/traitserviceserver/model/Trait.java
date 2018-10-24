@@ -51,6 +51,11 @@ public class Trait {
 		this.characterName = characterName;
 		this.claimed = false;
 		this.selectedAttribute = "";
+		this.positionX = -1;
+		this.positionY = -1;
+		this.specialization = -1;
+		this.specializationPositionX = -1;
+		this.specializationPositionY = -1;
 	}
 
 	public TraitType getTraitType() {
