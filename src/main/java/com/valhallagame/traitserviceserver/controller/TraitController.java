@@ -58,11 +58,9 @@ public class TraitController {
 				.map(t -> new SkilledTraitData(
 						TraitType.valueOf(t.getName()),
 						AttributeType.valueOf(t.getSelectedAttribute()),
-						t.getPositionX(),
-						t.getPositionY(),
+						t.getPosition(),
 						t.getSpecialization(),
-						t.getSpecializationPositionX(),
-						t.getSpecializationPositionY()))
+						t.getSpecializationPosition()))
 				.collect(Collectors.toList());
 		// @formatter:on
 		return new TraitData(ownedTraits, skilledTraits);
@@ -114,7 +112,7 @@ public class TraitController {
 			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is already skilled.");
 		}
 
-		traitService.skillTrait(trait, input.getSelectedAttribute(), input.getPositionX(), input.getPositionY());
+		traitService.skillTrait(trait, input.getSelectedAttribute(), input.getPosition());
 
 		return JS.message(HttpStatus.OK, "Trait skilled");
 	}
@@ -152,7 +150,7 @@ public class TraitController {
 			return JS.message(HttpStatus.CONFLICT, "Trait " + input.getName().name() + " is not skilled.");
 		}
 
-		traitService.specializeTrait(trait, input.getSpecialization(), input.getPositionX(), input.getPositionY());
+		traitService.specializeTrait(trait, input.getSpecialization(), input.getPosition());
 
 		return JS.message(HttpStatus.OK, "Trait specialized");
 	}

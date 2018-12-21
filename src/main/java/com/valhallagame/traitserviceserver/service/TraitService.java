@@ -102,14 +102,12 @@ public class TraitService {
 		}
 	}
 
-	public Trait skillTrait(Trait trait, AttributeType selectedAttribute, Integer positionX, Integer positionY) {
+	public Trait skillTrait(Trait trait, AttributeType selectedAttribute, Integer position) {
 		trait.setClaimed(true);
 		trait.setSelectedAttribute(selectedAttribute.name());
-		trait.setPositionX(positionX == null ? -1 : positionX);
-		trait.setPositionY(positionY == null ? -1 : positionY);
+		trait.setPosition(position == null ? -1 : position);
 		trait.setSpecialization(-1);
-		trait.setSpecializationPositionX(-1);
-		trait.setSpecializationPositionY(-1);
+		trait.setSpecializationPosition(-1);
 		return saveTrait(trait);
 	}
 
@@ -119,17 +117,15 @@ public class TraitService {
 		return saveTrait(trait);
 	}
 
-	public Trait specializeTrait(Trait trait, Integer specialization, Integer positionX, Integer positionY) {
+	public Trait specializeTrait(Trait trait, Integer specialization, Integer position) {
 		trait.setSpecialization(specialization);
-		trait.setSpecializationPositionX(positionX);
-		trait.setSpecializationPositionY(positionY);
+		trait.setSpecializationPosition(position);
 		return saveTrait(trait);
 	}
 
 	public Trait unspecializeTrait(Trait trait) {
 		trait.setSpecialization(-1);
-		trait.setSpecializationPositionX(-1);
-		trait.setSpecializationPositionY(-1);
+		trait.setSpecializationPosition(-1);
 		return saveTrait(trait);
 	}
 

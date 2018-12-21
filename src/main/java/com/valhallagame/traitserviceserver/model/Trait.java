@@ -34,28 +34,22 @@ public class Trait {
 	@Column(name = "selected_attribute")
 	private String selectedAttribute;
 
-	@Column(name = "position_x")
-	private Integer positionX;
-	@Column(name = "position_y")
-	private Integer positionY;
+	@Column(name = "position")
+	private Integer position;
 
 	@Column(name = "specialization")
 	private Integer specialization;
-	@Column(name = "specialization_position_x")
-	private Integer specializationPositionX;
-	@Column(name = "specialization_position_y")
-	private Integer specializationPositionY;
+	@Column(name = "specialization_position")
+	private Integer specializationPosition;
 
 	public Trait(TraitType traitType, String characterName) {
 		this.name = traitType.name();
 		this.characterName = characterName;
 		this.claimed = false;
 		this.selectedAttribute = "";
-		this.positionX = -1;
-		this.positionY = -1;
+		this.position = -1;
 		this.specialization = -1;
-		this.specializationPositionX = -1;
-		this.specializationPositionY = -1;
+		this.specializationPosition = -1;
 	}
 
 	public TraitType getTraitType() {
