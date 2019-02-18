@@ -8,6 +8,8 @@ import com.valhallagame.common.RestResponse;
 import com.valhallagame.traitserviceclient.message.*;
 import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.service.TraitService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(path = "/v1/trait")
 public class TraitController {
+	private static final Logger logger = LoggerFactory.getLogger(TraitController.class);
 
 	@Autowired
 	private TraitService traitService;
@@ -36,6 +39,7 @@ public class TraitController {
 	@RequestMapping(path = "/get-traits", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> getTraits(@Valid @RequestBody GetTraitsParameter input) throws IOException {
+		logger.info("Get Traits called with {}", input);
 		RestResponse<CharacterData> characterResp = characterServiceClient.getSelectedCharacter(input.getUsername());
 		Optional<CharacterData> characterOpt = characterResp.get();
 		if (!characterOpt.isPresent()) {
@@ -69,7 +73,7 @@ public class TraitController {
 	@RequestMapping(path = "/unlock-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> unlockTrait(@Valid @RequestBody UnlockTraitParameter input) throws IOException {
-
+		logger.info("Unlock Trait called with {}", input);
 		String characterName = input.getCharacterName().toLowerCase();
 		TraitType traitType = input.getName();
 
@@ -85,7 +89,7 @@ public class TraitController {
 	@RequestMapping(path = "/lock-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> lockTrait(@Valid @RequestBody LockTraitParameter input) throws IOException {
-
+		logger.info("Lock Trait called with {}", input);
 		String characterName = input.getCharacterName().toLowerCase();
 		TraitType traitType = input.getName();
 
@@ -101,6 +105,7 @@ public class TraitController {
 	@RequestMapping(path = "/skill-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> skillTrait(@Valid @RequestBody SkillTraitParameter input) {
+		logger.info("Skill Trait called with {}", input);
 		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
 
 		if (!unlockedTrait.isPresent()) {
@@ -120,6 +125,7 @@ public class TraitController {
 	@RequestMapping(path = "/unskill-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> unskillTrait(@Valid @RequestBody UnskillTraitParameter input) {
+		logger.info("Unskill Trait called with {}", input);
 		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
 
 		if (!unlockedTrait.isPresent()) {
@@ -139,6 +145,7 @@ public class TraitController {
 	@RequestMapping(path = "/specialize-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> specializeTrait(@Valid @RequestBody SpecializeTraitParameter input) {
+		logger.info("Specialize Trait called with {}", input);
 		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
 
 		if (!unlockedTrait.isPresent()) {
@@ -158,6 +165,7 @@ public class TraitController {
 	@RequestMapping(path = "/unspecialize-trait", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<JsonNode> unspecializeTrait(@Valid @RequestBody UnspecializeTraitParameter input) {
+		logger.info("Unspecialize Trait called with {}", input);
 		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
 
 		if (!unlockedTrait.isPresent()) {

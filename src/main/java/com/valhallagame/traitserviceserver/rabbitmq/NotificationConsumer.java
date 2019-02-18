@@ -1,17 +1,16 @@
 package com.valhallagame.traitserviceserver.rabbitmq;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.valhallagame.common.rabbitmq.NotificationMessage;
+import com.valhallagame.traitserviceserver.model.Trait;
+import com.valhallagame.traitserviceserver.service.TraitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.valhallagame.common.rabbitmq.NotificationMessage;
-import com.valhallagame.traitserviceserver.model.Trait;
-import com.valhallagame.traitserviceserver.service.TraitService;
+import java.io.IOException;
+import java.util.List;
 
 @Component
 public class NotificationConsumer {
@@ -23,6 +22,7 @@ public class NotificationConsumer {
 
 	@RabbitListener(queues = { "#{traitCharacterDeleteQueue.name}" })
 	public void receiveCharacterDelete(NotificationMessage message) {
+		logger.info("Received character delete notification with message {}", message);
 		String characterName = (String) message.getData().get("characterName");
 		List<Trait> traits = traitService.getTraits(characterName);
 		for (Trait trait : traits) {

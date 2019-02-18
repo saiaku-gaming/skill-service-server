@@ -36,14 +36,17 @@ public class TraitService {
 
 	// Use addTrait to add or other methods to change.
 	private Trait saveTrait(Trait trait) {
+		logger.info("Saving trait {}", trait);
 		return traitRepository.save(trait);
 	}
 
 	public void deleteTrait(Trait trait) {
+		logger.info("Deleting trait {}", trait);
 		traitRepository.delete(trait);
 	}
 
 	public List<Trait> getTraits(String characterName) {
+		logger.info("Getting traits for {}", characterName);
 		return traitRepository.findByCharacterName(characterName);
 	}
 
@@ -58,10 +61,12 @@ public class TraitService {
 	}
 
 	public boolean hasTraitUnlocked(TraitType traitType, String characterName) {
+		logger.info("Has {} unlocked trait [}", characterName, traitType);
 		return getTraits(characterName).stream().map(Trait::getName).anyMatch(t -> traitType.name().equals(t));
 	}
 
 	public void lockTrait(Trait trait) throws IOException {
+		logger.info("Locking trait {}", trait);
 		if (hasTraitUnlocked(trait.getTraitType(), trait.getCharacterName())) {
 
 			trait = traitRepository.findByCharacterNameAndName(trait.getCharacterName(), trait.getName()).orElse(null);
@@ -82,6 +87,7 @@ public class TraitService {
 	}
 
 	public void unlockTrait(Trait trait) throws IOException {
+		logger.info("Unlocking trait {}", trait);
 		if (!hasTraitUnlocked(trait.getTraitType(), trait.getCharacterName())) {
 			saveTrait(trait);
 
@@ -100,6 +106,7 @@ public class TraitService {
 	}
 
 	public Trait skillTrait(Trait trait, AttributeType selectedAttribute, Integer position) {
+		logger.info("Skilling trait {} attribute {} position {}", trait, selectedAttribute, position);
 		trait.setClaimed(true);
 		trait.setSelectedAttribute(selectedAttribute.name());
 		trait.setPosition(position == null ? -1 : position);
@@ -109,24 +116,28 @@ public class TraitService {
 	}
 
 	public Trait unskillTrait(Trait trait) {
+		logger.info("Unskilling trait {}", trait);
 		trait.setClaimed(false);
 		trait.setSelectedAttribute(null);
 		return saveTrait(trait);
 	}
 
 	public Trait specializeTrait(Trait trait, Integer specialization, Integer position) {
+		logger.info("Specializing trait {} specialization {} position {}", trait, specialization, position);
 		trait.setSpecialization(specialization);
 		trait.setSpecializationPosition(position);
 		return saveTrait(trait);
 	}
 
 	public Trait unspecializeTrait(Trait trait) {
+		logger.info("Unspecializing trait {}", trait);
 		trait.setSpecialization(-1);
 		trait.setSpecializationPosition(-1);
 		return saveTrait(trait);
 	}
 
 	public Optional<Trait> getUnlockedTrait(String characterName, TraitType traitType) {
+		logger.info("Getting unlocked traits for {} trait type {}", characterName, traitType);
 		return traitRepository.findByCharacterNameAndName(characterName, traitType.name());
 	}
 }
