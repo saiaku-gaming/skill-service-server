@@ -5,6 +5,7 @@ import com.valhallagame.characterserviceclient.model.CharacterData;
 import com.valhallagame.common.RestResponse;
 import com.valhallagame.common.rabbitmq.NotificationMessage;
 import com.valhallagame.common.rabbitmq.RabbitMQRouting;
+import com.valhallagame.common.rabbitmq.RabbitSender;
 import com.valhallagame.featserviceclient.message.FeatName;
 import com.valhallagame.traitserviceclient.message.AttributeType;
 import com.valhallagame.traitserviceclient.message.TraitType;
@@ -12,7 +13,6 @@ import com.valhallagame.traitserviceserver.model.Trait;
 import com.valhallagame.traitserviceserver.repository.TraitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class TraitService {
 	private static final Logger logger = LoggerFactory.getLogger(TraitService.class);
 
 	@Autowired
-	private RabbitTemplate rabbitTemplate;
+	private RabbitSender rabbitSender;
 
 	@Autowired
 	private TraitRepository traitRepository;
@@ -81,7 +81,7 @@ public class TraitService {
 			NotificationMessage message = new NotificationMessage(characterOpt.get().getOwnerUsername(),
 					"trait locked");
 			message.addData("traitName", trait.getName());
-			rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(), RabbitMQRouting.Trait.LOCK.name(),
+			rabbitSender.sendMessage(RabbitMQRouting.Exchange.TRAIT, RabbitMQRouting.Trait.LOCK.name(),
 					message);
 		}
 	}
@@ -100,7 +100,7 @@ public class TraitService {
 			NotificationMessage message = new NotificationMessage(characterOpt.get().getOwnerUsername(),
 					"trait unlocked");
 			message.addData("traitName", trait.getName());
-			rabbitTemplate.convertAndSend(RabbitMQRouting.Exchange.TRAIT.name(), RabbitMQRouting.Trait.UNLOCK.name(),
+			rabbitSender.sendMessage(RabbitMQRouting.Exchange.TRAIT, RabbitMQRouting.Trait.UNLOCK.name(),
 					message);
 		}
 	}
