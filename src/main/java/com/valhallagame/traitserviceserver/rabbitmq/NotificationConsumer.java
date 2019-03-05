@@ -39,6 +39,8 @@ public class NotificationConsumer {
 			for (Trait trait : traits) {
 				traitService.deleteTrait(trait);
 			}
+		} catch (Exception e) {
+			logger.error("Error while processing Character Delete notification", e);
 		} finally {
 			MDC.clear();
 		}
@@ -56,6 +58,8 @@ public class NotificationConsumer {
 			String characterName = (String) message.getData().get("characterName");
 
 			traitService.handleFeatAdding(characterName, featName);
+		} catch (Exception e) {
+			logger.error("Error while processing Feat Add notification", e);
 		} finally {
 			MDC.clear();
 		}
