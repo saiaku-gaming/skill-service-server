@@ -53,8 +53,21 @@ public class TraitService {
 	public void handleFeatAdding(String characterName, String featName) throws IOException {
 		logger.info("Handle Feat Adding characterName: {}, featName: {}", characterName, featName);
 		if (FeatName.valueOf(featName) == FeatName.MISSVEDEN_THE_CHIEFTAINS_DEMISE) {
-			unlockTrait(new Trait(TraitType.TOURETTES, characterName));
-			unlockTrait(new Trait(TraitType.PARANOIA, characterName));
+			unlockTrait(new Trait(TraitType.SOUL_TRANSFUSION, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.MISSVEDEN_DENIED) {
+			unlockTrait(new Trait(TraitType.PETRIFY, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.MISSVEDEN_TREADING_WITH_GREAT_CARE) {
+			unlockTrait(new Trait(TraitType.RECOVER, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.MISSVEDEN_A_CRYSTAL_CLEAR_MYSTERY) {
+			unlockTrait(new Trait(TraitType.FROST_ARROWS, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.FREDSTORP_THIEF_OF_THIEVES) {
+			unlockTrait(new Trait(TraitType.FIERY_PURGE, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.FREDSTORP_ANORECTIC) {
+			unlockTrait(new Trait(TraitType.SEIDHRING, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.FREDSTORP_NEVER_BEEN_BETTER) {
+			unlockTrait(new Trait(TraitType.FRIGGS_INTERVENTION, characterName));
+		} else if (FeatName.valueOf(featName) == FeatName.FREDSTORP_EXTRACTOR) {
+			unlockTrait(new Trait(TraitType.SHIELD_BASH, characterName));
 		} else {
 			logger.info("Nothing to do for feat adding {} with {}", characterName, featName);
 		}
