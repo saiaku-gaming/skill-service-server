@@ -118,6 +118,20 @@ public class TraitService {
 		}
 	}
 
+	public Trait purchaseTrait(Trait trait) {
+		logger.info("Purchase trait {}", trait);
+		trait.setPurchased(true);
+
+		return saveTrait(trait);
+	}
+
+	public Trait depurchaseTrait(Trait trait) {
+		logger.info("Depurchase trait {}", trait);
+		trait.setPurchased(false);
+
+		return saveTrait(trait);
+	}
+
 	public Trait skillTrait(Trait trait, AttributeType selectedAttribute, Integer position) {
 		logger.info("Skilling trait {} attribute {} position {}", trait, selectedAttribute, position);
 		trait.setClaimed(true);

@@ -1,0 +1,1 @@
+ALTER TABLE trait ADD COLUMN purchased BOOLEAN NOT NULL DEFAULT false;

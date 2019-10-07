@@ -56,6 +56,9 @@ public class TraitController {
 	private TraitData convertToData(List<Trait> traits) {
 		List<TraitType> ownedTraits = traits.stream().map(t -> TraitType.valueOf(t.getName()))
 				.collect(Collectors.toList());
+
+		List<TraitType> purchasedTraits = traits.stream().filter(Trait::getPurchased).map(t -> TraitType.valueOf(t.getName()))
+				.collect(Collectors.toList());
 		// @formatter:off
 		List<SkilledTraitData> skilledTraits = traits.stream()
 				.filter(Trait::getClaimed)
@@ -63,11 +66,12 @@ public class TraitController {
 						TraitType.valueOf(t.getName()),
 						AttributeType.valueOf(t.getSelectedAttribute()),
 						t.getPosition(),
+						t.getPurchased(),
 						t.getSpecialization(),
 						t.getSpecializationPosition()))
 				.collect(Collectors.toList());
 		// @formatter:on
-		return new TraitData(ownedTraits, skilledTraits);
+		return new TraitData(ownedTraits, purchasedTraits, skilledTraits);
 	}
 
 	@RequestMapping(path = "/unlock-trait", method = RequestMethod.POST)
@@ -100,6 +104,40 @@ public class TraitController {
 
 		traitService.lockTrait(new Trait(traitType, characterName));
 		return JS.message(HttpStatus.OK, "Trait Locked");
+	}
+
+	@RequestMapping(path = "/purchase-trait", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<JsonNode> purchaseTrait(@Valid @RequestBody PurchaseTraitParameter input) {
+		logger.info("Purchase Trait called with {}", input);
+		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
+
+		if (!unlockedTrait.isPresent()) {
+			return JS.message(HttpStatus.NOT_FOUND, "Unable to find trait: " + input.getName().name());
+		}
+
+		Trait trait = unlockedTrait.get();
+
+		traitService.purchaseTrait(trait);
+
+		return JS.message(HttpStatus.OK, traitService.purchaseTrait(trait));
+	}
+
+	@RequestMapping(path = "/depurchase-trait", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<JsonNode> depurchaseTrait(@Valid @RequestBody LockTraitParameter input) {
+		logger.info("Depurchase Trait called with {}", input);
+		Optional<Trait> unlockedTrait = traitService.getUnlockedTrait(input.getCharacterName(), input.getName());
+
+		if (!unlockedTrait.isPresent()) {
+			return JS.message(HttpStatus.NOT_FOUND, "Unable to find trait: " + input.getName().name());
+		}
+
+		Trait trait = unlockedTrait.get();
+
+		traitService.depurchaseTrait(trait);
+
+		return JS.message(HttpStatus.OK, traitService.depurchaseTrait(trait));
 	}
 
 	@RequestMapping(path = "/skill-trait", method = RequestMethod.POST)

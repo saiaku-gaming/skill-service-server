@@ -37,6 +37,9 @@ public class Trait {
 	@Column(name = "position")
 	private Integer position;
 
+	@Column(name = "purchased")
+	private Boolean purchased;
+
 	@Column(name = "specialization")
 	private Integer specialization;
 	@Column(name = "specialization_position")
@@ -48,6 +51,7 @@ public class Trait {
 		this.claimed = false;
 		this.selectedAttribute = "";
 		this.position = -1;
+		this.purchased = false;
 		this.specialization = -1;
 		this.specializationPosition = -1;
 	}
