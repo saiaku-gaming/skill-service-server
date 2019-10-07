@@ -120,7 +120,7 @@ public class TraitController {
 
 		traitService.purchaseTrait(trait);
 
-		return JS.message(HttpStatus.OK, traitService.purchaseTrait(trait));
+		return JS.message(HttpStatus.OK, "Trait purchased");
 	}
 
 	@RequestMapping(path = "/depurchase-trait", method = RequestMethod.POST)
@@ -137,7 +137,7 @@ public class TraitController {
 
 		traitService.depurchaseTrait(trait);
 
-		return JS.message(HttpStatus.OK, traitService.depurchaseTrait(trait));
+		return JS.message(HttpStatus.OK, "Trait depurchased");
 	}
 
 	@RequestMapping(path = "/skill-trait", method = RequestMethod.POST)
